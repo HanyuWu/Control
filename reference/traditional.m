@@ -1,4 +1,4 @@
-function tra
+function traditional
 close all
 %Set up parameters for sim
 p1       = 3.473;
