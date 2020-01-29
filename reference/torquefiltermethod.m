@@ -1,4 +1,4 @@
-function traditional
+function torquefiltermethod
 close all
 %Set up parameters for sim
 p1       = 3.473;
@@ -17,11 +17,18 @@ tf   = 1000;
 % (i.e., in this sim, X0 = [e0;r0;thetahat0])
 X0   = [4;10;3;2;1;1;1;1;1];
 
+% define uf
+uf   = [0;0];
+
+X0   = [X0;uf];
+
+
+
 % Options for integration function
 opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
 
 % Integrate (you can send the paramters theta to the dynamics as seen below)
-[t,STATES] = ode45(@(t,X) tradynamics(t,X,theta),[0 tf],X0,opts);
+[t,STATES] = ode45(@(t,X) compositedynamics(t,X,theta),[0 tf],X0,opts);
 
 % Set up desired trajectory data for plots (enter desired trajectory for your simulation)
 qd = [cos(0.5*t) 2*cos(t)]';
@@ -57,7 +64,7 @@ ax.ColorOrderIndex = 1;
 plot(t,thetaHat,':','LineWidth',2)
 hold off
 
-function [XDot] = tradynamics(t,X,theta)
+function [XDot] = compositedynamics(t,X,theta)
 
 % Parse parameter vector
 p1 = theta(1);
@@ -67,8 +74,10 @@ f1 = theta(4);
 f2 = theta(5);
 
 % Select gains for controller
-K        = 10; %Enter a number
-a        = 1.5; %Enter a number
+K        = 10; % Enter a number
+a        = 1.5; % Enter a number
+Beta     = 2;  % Torque filter gain, define it by yourself
+
 
 % Desired trajectory and needed derivatives
 qd       = [cos(0.5*t);2*cos(t)];
@@ -80,6 +89,8 @@ qdDotDot = [-0.25*cos(0.5*t); -2*cos(t)];  %Enter the expression
 e        = [X(1);X(2)];
 r        = [X(3);X(4)];
 thetaHat = [X(5);X(6);X(7);X(8);X(9)];
+uf       = [X(10);X(11)];
+
 
 % Compute current x and xDot for convenience
 q        = e + qd;
@@ -122,5 +133,9 @@ rDot        = a*eDot + M\(-Vm*qDot-fd*qDot+u) - qdDotDot; %Enter the expression
 gamma = eye([5,5]);
 thetaHatDot = -gamma*Yd.'*r; %Enter the expression
 
+% Compute uf
+ufdot      =  Beta*u - Beta*uf;
+
+
 % Stacked dynamics vector (XDot is the same size and "form" as X)
-XDot        = [eDot;rDot;thetaHatDot];
+XDot        = [eDot;rDot;thetaHatDot;ufdot];
