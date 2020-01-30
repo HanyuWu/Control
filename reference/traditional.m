@@ -67,7 +67,7 @@ f1 = theta(4);
 f2 = theta(5);
 
 % Select gains for controller
-K        = 10; %Enter a number
+K        = 5; %Enter a number
 a        = 1.5; %Enter a number
 
 % Desired trajectory and needed derivatives
@@ -108,8 +108,6 @@ yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); %Enter the expression
 yd24      = 0; %Enter the expression
 yd25      = qdDot(2); %Enter the expression
 Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
-
-% Design controller
 
 % u        = -K*r + M*qdDotDot + Vm*qDot + fd*qDot; %Enter the expression
 % u        = -K*r - e

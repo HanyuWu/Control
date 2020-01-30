@@ -17,11 +17,13 @@ tf   = 1000;
 % (i.e., in this sim, X0 = [e0;r0;thetahat0])
 X0   = [4;10;3;2;1;1;1;1;1];
 
-% define uf
-uf   = [0;0];
+% define uf initial value
+uf   = [2;2];
 
-X0   = [X0;uf];
 
+
+Ydf =  [1;1;1;1;1;1;1;1;1;1];
+X0   = [X0;uf;Ydf];
 
 
 % Options for integration function
@@ -38,6 +40,7 @@ qd = [cos(0.5*t) 2*cos(t)]';
 e  = STATES(:,1:2)';
 r  = STATES(:,3:4)';
 thetaHat = STATES(:,5:9)';
+
 
 % Compute x from e and xd for plotting purposes
 q  = e + qd;
@@ -64,6 +67,8 @@ ax.ColorOrderIndex = 1;
 plot(t,thetaHat,':','LineWidth',2)
 hold off
 
+
+
 function [XDot] = compositedynamics(t,X,theta)
 
 % Parse parameter vector
@@ -74,9 +79,10 @@ f1 = theta(4);
 f2 = theta(5);
 
 % Select gains for controller
-K        = 10; % Enter a number
+K        = 5; % Enter a number
 a        = 1.5; % Enter a number
-Beta     = 2;  % Torque filter gain, define it by yourself
+Beta     = 1;  % Torque filter gain, define it by yourself
+gamma = eye([5,5]);   
 
 
 % Desired trajectory and needed derivatives
@@ -90,6 +96,8 @@ e        = [X(1);X(2)];
 r        = [X(3);X(4)];
 thetaHat = [X(5);X(6);X(7);X(8);X(9)];
 uf       = [X(10);X(11)];
+Ydf      = [X(12),X(13),X(14),X(15),X(16);X(17),X(18),X(19),X(20),X(21)];
+
 
 
 % Compute current x and xDot for convenience
@@ -124,18 +132,14 @@ Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
 
 % u        = -K*r + M*qdDotDot + Vm*qDot + fd*qDot; %Enter the expression
 % u        = -K*r - e
-u        = -K*r - e + Yd*thetaHat;
-
-
-% Compute current closed-loop dynamics
+u        = -K*r + Yd*thetaHat;
 eDot        = r - a*e;
 rDot        = a*eDot + M\(-Vm*qDot-fd*qDot+u) - qdDotDot; %Enter the expression
-gamma = eye([5,5]);
-thetaHatDot = -gamma*Yd.'*r; %Enter the expression
 
-% Compute uf
-ufdot      =  Beta*u - Beta*uf;
-
-
+miu = uf - Ydf*thetaHat;
+thetaHatDot = -gamma*Yd.'*r + gamma*Ydf.'*miu; %Enter the expression
+uf_dot      =  Beta*u - Beta*uf;
+Ydf_dot = Beta*Yd -Beta*Ydf;
+Ydf_dot = reshape(Ydf_dot',[10,1]);
 % Stacked dynamics vector (XDot is the same size and "form" as X)
-XDot        = [eDot;rDot;thetaHatDot;ufdot];
+XDot        = [eDot;rDot;thetaHatDot;uf_dot;Ydf_dot];
