@@ -34,27 +34,40 @@ opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
 % Integrate (you can send the paramters theta to the dynamics as seen below)
 [t,STATES0] = ode45(@(t,X) tradynamics(t,X,theta),[0 tf],X0,opts);
 thetaHat0 = STATES0(:,5:9)';
-figure()
+r  = STATES0(:,3:4)';
+figure(1)
 plot(t,thetaHat0,'LineWidth',2)
 hold on
 
-[t,STATES1] = ode45(@(t,X) compositedynamics2(t,X,theta),[0 tf],X1,opts);
+[t1,STATES1] = ode45(@(t1,X) compositedynamics2(t1,X,theta),[0 tf],X1,opts);
 thetaHat1 = STATES1(:,5:9)';
+r1  = STATES1(:,3:4)';
 ax = gca;
 ax.ColorOrderIndex = 1;
-plot(t,thetaHat1,':','LineWidth',2)
+plot(t1,thetaHat1,':','LineWidth',2)
 hold on
 
 ax = gca;
 ax.ColorOrderIndex = 1;
-plot(t,repmat(theta,1,length(t)),'-','LineWidth',2)
+plot(t1,repmat(theta,1,length(t1)),'-','LineWidth',2)
 hold on
 
-[t,STATES2] = ode45(@(t,X) leastsquaredynamics2(t,X,theta),[0 tf],X2,opts);
+[t2,STATES2] = ode45(@(t2,X) leastsquaredynamics2(t2,X,theta),[0 tf],X2,opts);
 thetaHat2 = STATES2(:,5:9)';
+r2  = STATES2(:,3:4)';
 ax = gca;
 ax.ColorOrderIndex = 1;
-plot(t,thetaHat2,'-.','LineWidth',2)
+plot(t2,thetaHat2,'-.','LineWidth',2)
+hold off
+
+figure(2)
+plot(t,r(1,:),'r','LineWidth',2)
+hold on
+plot(t1,r1(1,:),'g','LineWidth',2)
+hold on
+plot(t2,r2(1,:),'b','LineWidth',2)
+hold on
+
 
 
 

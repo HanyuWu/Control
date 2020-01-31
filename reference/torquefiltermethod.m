@@ -67,6 +67,41 @@ ax.ColorOrderIndex = 1;
 plot(t,thetaHat,':','LineWidth',2)
 hold off
 
+figure(4)
+plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
+
+index = 0;
+tau = [0;0];
+for i = t
+    global tau;
+    index = index+1;
+    qd       = [cos(0.5*i);2*cos(i)];
+    qdDot    = [-0.5*sin(0.5*i); -2*sin(i)];   %Enter the expression
+    qdDotDot = [-0.25*cos(0.5*i); -2*cos(i)];  %Enter the expression 
+    cd2       = cos(qd(2));
+    sd2       = sin(qd(2));
+    yd11      = qdDotDot(1); %Enter the expression
+    yd12      = qdDotDot(2); %Enter the expression
+    yd13      = 2*cd2*qdDotDot(1)+cd2*qdDotDot(2)-sd2*qdDot(2)*qdDot(1)-sd2*(qdDot(1)+qdDot(2))*qdDot(2); %Enter the expression
+    yd14      = qdDot(1); %Enter the expression
+    yd15      = 0; %Enter the expression
+    yd21      = 0; %Enter the expression
+    yd22      = qdDotDot(1)+qdDotDot(2); %Enter the expression
+    yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); %Enter the expression
+    yd24      = 0; %Enter the expression
+    yd25      = qdDot(2); %Enter the expression
+    Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
+    K        = 5;
+    u        = -K*r(:,index) - e(:,index) + Yd*thetaHat(:,index);
+    tau = horzcat(tau,u);
+
+end
+tausize = size(tau);
+length_ = 1:tausize(2);
+figure(5)
+plot(length_,tau,'--','LineWidth',2)
+
+
 
 
 function [XDot] = compositedynamics(t,X,theta)
