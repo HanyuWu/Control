@@ -98,7 +98,7 @@ With doing so, we can finally have:<br>
 
 <img src="https://latex.codecogs.com/svg.latex?\dot{V}=r^{t}N-\alpha&space;e^{2}-kr^{2}" title="\dot{V}=r^{t}N-\alpha e^{2}-kr^{2}" /><br>
 
-where &nbsp; <img src="https://latex.codecogs.com/svg.latex?N&space;=&space;\rho \left&space;\|&space;Z&space;\right&space;\|" title="N = \rho \left \| Z \right \|" /> &nbsp; and &nbsp; <img src="https://latex.codecogs.com/svg.latex?\rho" title="P" /> &nbsp; is a function of &nbsp; <img src="https://latex.codecogs.com/svg.latex?Z" title="Z" />&nbsp; with &nbsp; <img src="https://latex.codecogs.com/svg.latex?Z&space;=&space;[r;e]" title="Z = [r;e]" /> &nbsp;, specifically we can bound the parameters in this function by Mean Value Theorem. With tuning &nbsp; 
+where &nbsp; <img src="https://latex.codecogs.com/svg.latex?N&space;=\rho\left&space;\|&space;Z&space;\right&space;\|" title="N =\rho\left \| Z \right \|" /> &nbsp; and &nbsp; <img src="https://latex.codecogs.com/svg.latex?\rho" title="P" /> &nbsp; is a function of &nbsp; <img src="https://latex.codecogs.com/svg.latex?Z" title="Z" />&nbsp; with &nbsp; <img src="https://latex.codecogs.com/svg.latex?Z&space;=&space;[r;e]" title="Z = [r;e]" /> &nbsp;, specifically we can bound the parameters in this function by Mean Value Theorem. With tuning &nbsp; 
 <img src="https://latex.codecogs.com/svg.latex?\alpha" title="\alpha" /> &nbsp; and &nbsp; <img src="https://latex.codecogs.com/svg.latex?k" title="k" /> &nbsp;, we can have:<br> 
 
 <img src="https://latex.codecogs.com/svg.latex?\dot{V}\leqslant&space;-\varphi&space;\left&space;\|&space;Z&space;\right&space;\|^{2}" title="\dot{V}\leqslant -\varphi \left \| Z \right \|^{2}" /><br>
