@@ -71,9 +71,9 @@ figure(4)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
 
 index = 0;
-tau = [0;0];
-for i = t
-    global tau;
+global tau;
+tau = [];
+for i = t'
     index = index+1;
     qd       = [cos(0.5*i);2*cos(i)];
     qdDot    = [-0.5*sin(0.5*i); -2*sin(i)];   %Enter the expression
@@ -94,9 +94,9 @@ for i = t
     K        = 5;
     u        = -K*r(:,index) - e(:,index) + Yd*thetaHat(:,index);
     tau = horzcat(tau,u);
-
 end
-tausize = size(tau);
+
+tausize = size(tau)
 length_ = 1:tausize(2);
 figure(5)
 plot(length_,tau,'--','LineWidth',2)
