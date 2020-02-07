@@ -30,5 +30,4 @@ linearSystemAnalyzer('step',G)
 bode(G)
 linearSystemAnalyzer('bode',G)
 
-%% 
 
