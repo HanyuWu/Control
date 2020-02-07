@@ -1,0 +1,5 @@
+MathWorks Limited License Addendum 1
+
+For academic, non-commercial purposes only, Licensee (as defined in the License associated with this download (the License)) may (1) modify the Materials (as defined in the License); and (2) if the Licensee is a professor or teacher, Licensee may provide his/her students with access to the Materials, including via a server that may only be accessed by his/her students.
+
+Version 1.0
