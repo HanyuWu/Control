@@ -1,6 +1,8 @@
 function torquefiltermethod
 close all
-%Set up parameters for sim
+% Set up parameters for sim
+hold on
+
 p1       = 3.473;
 p2       = 0.196;
 p3       = 0.242;
@@ -45,6 +47,7 @@ thetaHat = STATES(:,5:9)';
 % Compute x from e and xd for plotting purposes
 q  = e + qd;
 
+
 % Plot the actual vs desired trajectories
 figure(1)
 plot(t,qd,'-','LineWidth',2)
@@ -56,15 +59,16 @@ hold off
 
 % Plot the filtered tracking error
 figure(2)
-plot(t,r,'--','LineWidth',2)
+plot(t,e,'-','LineWidth',2)
+
 
 % Plot the adaptive estimates vs actual parameters
 figure(3)
-plot(t,repmat(theta,1,length(t)),'-','LineWidth',2)
+plot(t,repmat(theta,1,length(t)),':','LineWidth',2)
 hold on
 ax = gca;
 ax.ColorOrderIndex = 1;
-plot(t,thetaHat,':','LineWidth',2)
+plot(t,thetaHat,'-','LineWidth',2)
 hold off
 
 figure(4)
@@ -99,7 +103,7 @@ end
 tausize = size(tau)
 length_ = 1:tausize(2);
 figure(5)
-plot(length_,tau,'--','LineWidth',2)
+plot(length_,tau,'-','LineWidth',2)
 
 
 
@@ -115,9 +119,13 @@ f2 = theta(5);
 
 % Select gains for controller
 K        = 10; % Enter a number
-a        = 1.5; % Enter a number
+a        = 1; % Enter a number
 Beta     = 1;  % Torque filter gain, define it by yourself
-gamma = eye([5,5]);   
+gamma = [30 0 0 0 0; ...
+    0 1 0 0 0; ...
+    0 0 1 0 0; ...
+    0 0 0 5 0; ...
+    0 0 0 0 1];    
 
 
 % Desired trajectory and needed derivatives

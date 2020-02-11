@@ -12,7 +12,7 @@ f2       = 1.1;
 
 
 % Simulation final time
-tf   = 60;
+tf   = 30;
 
 % Initial condition vector (X0 must be same size and "form" as X and XDot below)
 % (i.e., in this sim, X0 = [e1_0;e2_0;r_0;thetahat_0])
@@ -45,6 +45,8 @@ e2  = STATES(:,3:4)';
 r  = STATES(:,5:6)';
 intergrate = STATES(:,7:8)';
 
+
+
 % Compute x from e and xd for plotting purposes
 q  = e1 + qd;
 
@@ -57,8 +59,10 @@ ax.ColorOrderIndex = 1;
 plot(t,q,':','LineWidth',2)
 hold off
 
+
 figure(2)
 plot(t,e1,'-','LineWidth',2)
+
 
 figure(3)
 plot(t,e2,'-','LineWidth',2)
@@ -67,6 +71,7 @@ figure(4)
 K        = 10;
 uout = (K+1)*e2 - (K+1)*e2_0 + intergrate;
 plot(t,uout,'-','LineWidth',2)
+
 
 function [XDot] = tra_rise(t,X,theta)
 

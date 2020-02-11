@@ -1,5 +1,5 @@
 function Rise
-close all
+hold on
 
 %Set up dynamics for sim
 p1       = 3.473;
@@ -60,6 +60,7 @@ Rise_intergrate_1  = STATES(:,24:25)';
 % Compute x from e and xd for plotting purposes
 q  = -e1 + qd;
 
+
 % Plot the actual vs desired trajectories
 figure(1)
 plot(t,qd,'-','LineWidth',2)
@@ -70,10 +71,17 @@ plot(t,q,':','LineWidth',2)
 hold off
 
 figure(2)
+hold on
 plot(t,e1,'-','LineWidth',2)
 
+
 figure(3)
+plot(t,repmat(theta,1,length(t)),':','LineWidth',2)
+hold on
+ax = gca;
+ax.ColorOrderIndex = 1;
 plot(t,thetaHat,'-','LineWidth',2)
+hold off
 
 index = 0;
 global tau;
@@ -81,20 +89,20 @@ tau = [];
 for i = t'
     index = index+1;
     qd       = [cos(0.5*i);2*cos(i)];
-    qdDot    = [-0.5*sin(0.5*i); -2*sin(i)];   %Enter the expression
-    qdDotDot = [-0.25*cos(0.5*i); -2*cos(i)];  %Enter the expression 
+    qdDot    = [-0.5*sin(0.5*i); -2*sin(i)];
+    qdDotDot = [-0.25*cos(0.5*i); -2*cos(i)];  
     cd2       = cos(qd(2));
     sd2       = sin(qd(2));
-    yd11      = qdDotDot(1); %Enter the expression
-    yd12      = qdDotDot(2); %Enter the expression
+    yd11      = qdDotDot(1); 
+    yd12      = qdDotDot(2); 
     yd13      = 2*cd2*qdDotDot(1)+cd2*qdDotDot(2)-sd2*qdDot(2)*qdDot(1)-sd2*(qdDot(1)+qdDot(2))*qdDot(2); %Enter the expression
-    yd14      = qdDot(1); %Enter the expression
-    yd15      = 0; %Enter the expression
-    yd21      = 0; %Enter the expression
-    yd22      = qdDotDot(1)+qdDotDot(2); %Enter the expression
-    yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); %Enter the expression
-    yd24      = 0; %Enter the expression
-    yd25      = qdDot(2); %Enter the expression
+    yd14      = qdDot(1); 
+    yd15      = 0; 
+    yd21      = 0; 
+    yd22      = qdDotDot(1)+qdDotDot(2); 
+    yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); 
+    yd24      = 0; 
+    yd25      = qdDot(2); 
     Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
     K        = 5;
     u        = Yd*thetaHat(:,index) + (K+1)*e2(:,index) - (K+1)*e2_0 + Rise_intergrate_1(:,index);
@@ -104,7 +112,8 @@ end
 tausize = size(tau)
 length_ = 1:tausize(2);
 figure(4)
-plot(length_,tau,'--','LineWidth',2)
+plot(length_,tau,'-','LineWidth',2)
+
 
 figure(5)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
@@ -123,12 +132,16 @@ f2 = theta(5);
 e2_0     = [3;2];
 
 % Select gains for controller
-K        = 100; % Enter a number
-K2       = 150;
-a1       = 30; % Enter a number
-a2       = 30;
-Beta     = 10;  % Torque filter gain, define it by yourself
-gamma = eye([5,5]);   
+K        = 15; 
+K2       = 25;
+a1       = 1; 
+a2       = 3;
+Beta     = 1;  
+gamma = [10 0 0 0 0; ...
+    0 1 0 0 0; ...
+    0 0 1 0 0; ...
+    0 0 0 10 0; ...
+    0 0 0 0 1];   
 
 
 % Desired trajectory and needed derivatives
