@@ -58,7 +58,7 @@ Rise_intergrate_1  = STATES(:,24:25)';
 
 
 % Compute x from e and xd for plotting purposes
-q  = e1 + qd;
+q  = -e1 + qd;
 
 % Plot the actual vs desired trajectories
 figure(1)
@@ -106,6 +106,10 @@ length_ = 1:tausize(2);
 figure(4)
 plot(length_,tau,'--','LineWidth',2)
 
+figure(5)
+plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
+
+
 
 function [XDot] = composite_rise1(t,X,theta)
 
@@ -119,11 +123,11 @@ f2 = theta(5);
 e2_0     = [3;2];
 
 % Select gains for controller
-K        = 2000; % Enter a number
-K2       = 2000;
-a1       = 50; % Enter a number
-a2       = 50;
-Beta     = 100;  % Torque filter gain, define it by yourself
+K        = 100; % Enter a number
+K2       = 150;
+a1       = 30; % Enter a number
+a2       = 30;
+Beta     = 10;  % Torque filter gain, define it by yourself
 gamma = eye([5,5]);   
 
 
@@ -147,8 +151,8 @@ Rise_intergrate_2 = [X(26);X(27)];
 
 
 % Compute current x and xDot for convenience
-q        = e1 + qd;
-qDot     = e2 - a1*e1 + qdDot;
+q        = -e1 + qd;
+qDot     = -e2 + a1*e1 + qdDot;
 
 % Compute cos(x2) and sin(x2) for convenience
 c2       = cos(q(2));
@@ -165,6 +169,7 @@ Taud     = [0.5*cos(0.5*t); sin(t)];
 % Compute current regression matrix
 cd2       = cos(qd(2));
 sd2       = sin(qd(2));
+
 yd11      = qdDotDot(1);
 yd12      = qdDotDot(2); 
 yd13      = 2*cd2*qdDotDot(1)+cd2*qdDotDot(2)-sd2*qdDot(2)*qdDot(1)-sd2*(qdDot(1)+qdDot(2))*qdDot(2); %Enter the expression
@@ -218,14 +223,15 @@ r = e2Dot + a2*e2;
 %% Design thetaHatDot
 
 Ydf_dot = Beta*Yd -Beta*Ydf;
-
 uf_dot = Beta*u - Beta*uf;
+
 ufhat = Ydf*thetaHat + Rise_intergrate_2;
 E = uf - ufhat;
-thetaHatDot = gamma*YdDot'*r - gamma*Ydf_dot'*E;
-% Design Prediction Error E(epsilon)
+thetaHatDot = gamma*YdDot'*r + gamma*Ydf_dot'*E;
 Rise_intergrate_2_Dot = K2*E + Beta*sign(E);
+
 t
+
 %%
 Ydf_dot = reshape(Ydf_dot',[10,1]);
 XDot        = [e1Dot;e2Dot;rDot;thetaHatDot;uf_dot;Ydf_dot; ...
