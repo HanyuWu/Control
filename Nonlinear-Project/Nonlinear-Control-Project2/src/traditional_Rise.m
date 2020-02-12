@@ -1,7 +1,6 @@
 function traditional_Rise
 close all
-
-%Set up dynamics for sim
+% Set up dynamics for sim
 p1       = 3.473;
 p2       = 0.196;
 p3       = 0.242;
@@ -50,6 +49,7 @@ intergrate = STATES(:,7:8)';
 % Compute x from e and xd for plotting purposes
 q  = e1 + qd;
 
+
 % Plot the actual vs desired trajectories
 figure(1)
 plot(t,qd,'-','LineWidth',2)
@@ -59,9 +59,8 @@ ax.ColorOrderIndex = 1;
 plot(t,q,':','LineWidth',2)
 hold off
 
-
 figure(2)
-plot(t,e1,'-','LineWidth',2)
+plot(t,e1,'b','LineWidth',2)
 
 
 figure(3)

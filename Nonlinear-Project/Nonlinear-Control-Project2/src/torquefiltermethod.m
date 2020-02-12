@@ -1,7 +1,6 @@
 function torquefiltermethod
 close all
 % Set up parameters for sim
-hold on
 
 p1       = 3.473;
 p2       = 0.196;
@@ -57,9 +56,11 @@ ax.ColorOrderIndex = 1;
 plot(t,q,':','LineWidth',2)
 hold off
 
+
 % Plot the filtered tracking error
 figure(2)
-plot(t,e,'-','LineWidth',2)
+plot(t,e,'r-.','LineWidth',2)
+
 
 
 % Plot the adaptive estimates vs actual parameters
@@ -104,7 +105,6 @@ tausize = size(tau)
 length_ = 1:tausize(2);
 figure(5)
 plot(length_,tau,'-','LineWidth',2)
-
 
 
 

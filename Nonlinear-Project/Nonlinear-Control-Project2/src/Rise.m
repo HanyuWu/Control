@@ -1,6 +1,4 @@
 function Rise
-hold on
-
 %Set up dynamics for sim
 p1       = 3.473;
 p2       = 0.196;
@@ -60,7 +58,6 @@ Rise_intergrate_1  = STATES(:,24:25)';
 % Compute x from e and xd for plotting purposes
 q  = -e1 + qd;
 
-
 % Plot the actual vs desired trajectories
 figure(1)
 plot(t,qd,'-','LineWidth',2)
@@ -71,8 +68,7 @@ plot(t,q,':','LineWidth',2)
 hold off
 
 figure(2)
-hold on
-plot(t,e1,'-','LineWidth',2)
+plot(t,e1,'k:','LineWidth',2)
 
 
 figure(3)
@@ -117,7 +113,7 @@ plot(length_,tau,'-','LineWidth',2)
 
 figure(5)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
-
+%}
 
 
 function [XDot] = composite_rise1(t,X,theta)
