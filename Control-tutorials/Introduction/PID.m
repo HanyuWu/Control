@@ -73,7 +73,14 @@ step(T,t)
 
 %% Automatic PID tuning
 
-pidTuner(P,'p')
+pidTuner(P,'p');
 
+%% Compare you own design with the PID Tuner
 
+pidTuner(P,C);
+
+%% Tuning without GUI
+
+opts = pidtuneOptions('CrossoverFrequency',32,'PhaseMargin',90);
+[C, info] = pidtune(P, 'pid', opts)
 
