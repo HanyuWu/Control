@@ -64,17 +64,8 @@ hold off
 figure(4)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
 
-size(his('time'))
-size(his('tau'))
-size(t)
-
-time = his('time');
-tau = his('tau');
-time = time(2:end);
-tau = tau(:,2:end);
 figure(5)
-plot(time,tau,'-','LineWidth',2)
-
+plot(his('time'),his('tau'),'-','LineWidth',2)
 
 
 function [XDot] = tradynamics(t,X,theta)
@@ -136,11 +127,17 @@ Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
 u        = -K*r + Yd*thetaHat;
 
 prevtimes = his('time');
-prevtimes = prevtimes(t > prevtimes);
-prevtaus = his('tau');
-prevtaus = prevtaus(:,t > prevtimes);
-his('time') = [prevtimes, t];
-his('tau') = [prevtaus, u];
+prevtimes = prevtimes(t > prevtimes)
+
+elseif (t > pprevtime)
+    time = his('time');
+    tau = his('tau');
+    time(end) = t;
+    tau(:,end) = u;
+    his('time') = time;
+    his('tau') = tau;
+end
+
 
 % Compute current closed-loop dynamics
 eDot        = r - a*e;
