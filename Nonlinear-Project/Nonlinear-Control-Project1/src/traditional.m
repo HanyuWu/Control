@@ -22,7 +22,7 @@ opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
 
 global his;
 keyset  = {'time','tau'};
-keyvalue = {[-1],[-1;-1]};
+keyvalue = {10,[10;10]};
 his = containers.Map(keyset,keyvalue);
 
 
@@ -70,8 +70,6 @@ size(t)
 
 time = his('time');
 tau = his('tau');
-time = time(2:end);
-tau = tau(:,2:end);
 figure(5)
 plot(time,tau,'-','LineWidth',2)
 
@@ -94,8 +92,8 @@ a        = 1.5; %Enter a number
 
 % Desired trajectory and needed derivatives
 qd       = [cos(0.5*t);2*cos(t)];
-qdDot    = [-0.5*sin(0.5*t); -2*sin(t)];   %Enter the expression
-qdDotDot = [-0.25*cos(0.5*t); -2*cos(t)];  %Enter the expression 
+qdDot    = [-0.5*sin(0.5*t); -2*sin(t)];
+qdDotDot = [-0.25*cos(0.5*t); -2*cos(t)];
 
 % Parse current states (X is the same size and "form" as X0)
 % (i.e., in this sim, X = [e;r;thetahat])
@@ -119,16 +117,16 @@ fd       = [f1 0;0 f2];
 % Compute current regression matrix
 cd2       = cos(qd(2));
 sd2       = sin(qd(2));
-yd11      = qdDotDot(1); %Enter the expression
-yd12      = qdDotDot(2); %Enter the expression
-yd13      = 2*cd2*qdDotDot(1)+cd2*qdDotDot(2)-sd2*qdDot(2)*qdDot(1)-sd2*(qdDot(1)+qdDot(2))*qdDot(2); %Enter the expression
-yd14      = qdDot(1); %Enter the expression
-yd15      = 0; %Enter the expression
-yd21      = 0; %Enter the expression
-yd22      = qdDotDot(1)+qdDotDot(2); %Enter the expression
-yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); %Enter the expression
-yd24      = 0; %Enter the expression
-yd25      = qdDot(2); %Enter the expression
+yd11      = qdDotDot(1); 
+yd12      = qdDotDot(2); 
+yd13      = 2*cd2*qdDotDot(1)+cd2*qdDotDot(2)-sd2*qdDot(2)*qdDot(1)-sd2*(qdDot(1)+qdDot(2))*qdDot(2);
+yd14      = qdDot(1); 
+yd15      = 0; 
+yd21      = 0;
+yd22      = qdDotDot(1)+qdDotDot(2); 
+yd23      = cd2*qdDotDot(1)+sd2*qdDot(1)*qdDot(1); 
+yd24      = 0; 
+yd25      = qdDot(2); 
 Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
 
 % u        = -K*r + M*qdDotDot + Vm*qDot + fd*qDot; %Enter the expression
