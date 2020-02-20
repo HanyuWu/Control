@@ -1,4 +1,4 @@
-function CLmethod
+function ICLmethod
 
 % setup and initialization
 close all
@@ -10,15 +10,19 @@ f2       = 1.1;
 
 theta    = [p1;p2;p3;f1;f2];
 
-tf   = 150;
+% delta T for Integrating period 
+delta = 0.1;
+
+
+tf   = 200;
 
 % Initial condition vector (X0 must be same size and "form" as X and XDot below)
 % (i.e., in this sim, X0 = [e0;r0;thetahat0])
 X0   = [4;10;3;2;1;1;1;1;1];
 
 global his;
-keyset  = {'time','ui','Y1i'};
-keyvalue = {[],[],[]}; % Initializtion, will be replaced in
+keyset  = {'time','script_ui','script_Y1i','Y1i','ui','time_step'};
+keyvalue = {[],[],[],[],[],[]}; % Initializtion, will be replaced in
                                    % ODE iterations.
 his = containers.Map(keyset,keyvalue);
 
@@ -26,7 +30,7 @@ his = containers.Map(keyset,keyvalue);
 opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
 
 % integrate (you can send the paramters theta to the dynamics as seen below)
-[t,STATES] = ode45(@(t,X) CLdynamics(t,X,theta),[0 tf],X0,opts);
+[t,STATES] = ode45(@(t,X) ICLdynamics(t,X,theta,delta),[0 tf],X0,opts);
 
 e  = STATES(:,1:2)';
 thetaHat = STATES(:,5:9)';
@@ -43,15 +47,15 @@ plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
 
 end
 
-function [XDot] = CLdynamics(t,X,theta)
+function [XDot] = ICLdynamics(t,X,theta,delta)
 
 % initialize global variables
 
 global his;
 
-persistent flag;
-if isempty(flag)
-    flag = 0;
+persistent pos;
+if isempty(pos)
+    pos = 0;
 end
 
 persistent Y1hist;
@@ -69,6 +73,9 @@ if isempty(timeprev)
     timeprev = 0;
 end
 
+% For ICL, We have specify delta T
+delta_T = delta;
+
 
 % Parse parameter vector
 p1 = theta(1);
@@ -84,13 +91,13 @@ qdDotDot = [-0.25*cos(0.5*t); -2*cos(t)];
 
 % select gains (i.e., K, Kcl/Kicl, alpha, Gamma)
 a = 2;
-gamma = [1 0 0 0 0; ...
+gamma = [5 0 0 0 0; ...
          0 1 0 0 0; ...
          0 0 1 0 0; ...
          0 0 0 1 0; ...
          0 0 0 0 1];
 K = 5;
-Kcl = 10e-8;
+Kcl = 10e-3;
 
 % parse current states (X is the same size and "form" as X0)
 e        = [X(1);X(2)];
@@ -126,16 +133,18 @@ Y2 = [qdDotDot(1)+a*eDot(1),qdDotDot(2)+a*eDot(2), ...
 lambda  = 0;
 
 % determine if the history stack meets the min eigenvalue condition
-if flag == 0 %if min eigenvalue of history stack less than lambda
+if pos == 0 %if min eigenvalue of history stack less than lambda
     
     % if first loop (cannot determine dq or dt), initiallize qDotDot.
     if t == 0
+        dt = 0;
         qDotDot   = [0;0];
     else
         % compute qDotDot for Y1i
         dt        = t - timeprev; % determine delta time.
         dq        = qDot - qDotprev; % determine delta qDot.
         qDotDot   = dq/dt; % determine qDotDot.
+        his('time_step') = cat(1,his('time_step'),dt);
     end
     
     %determine Y1i (Y1 for this loop)
@@ -150,10 +159,34 @@ if flag == 0 %if min eigenvalue of history stack less than lambda
     y24      = 0; 
     y25      = qDot(2); 
     Y1i       = [y11 y12 y13 y14 y15;y21 y22 y23 y24 y25];
-    his('Y1i') = cat(3,his('Y1i'),Y1i)
+    his('Y1i') = cat(3,his('Y1i'),Y1i);
     
+    time_interval = [];
+    Y1int = 0;
+    u_int = 0;
+    % Do intergration
+    if t>delta_T
+        time_period = his('time');
+        time_start = t - delta_T;
+        bool_index = (time_period >= time_start);
+        time_interval = his('time_step');
+        time_interval = time_interval(bool_index);
+        Y1is = his('Y1i');
+        Y1is = Y1is(:,:,1:end-1);
+        Y1is = Y1is(:,:,bool_index);
+        uis = his('ui');
+        uis = uis(:,bool_index);
+        for i = 1:length(time_interval)
+            if Y1is(:,:,i)~= inf & Y1is(:,:,i)~= -inf & Y1is(:,:,i)~= -inf
+                Y1int = Y1int + time_interval(i)*Y1is(:,:,i);
+                u_int = u_int + time_interval(i)*uis(:,i);
+            end
+        end
+        his('script_Y1i') = cat(3,his('script_Y1i'),Y1int);
+        his('script_ui') = cat(2,his('script_ui'),u_int);
+    end
     % determine new history stack (summation)
-    Y1hist    = Y1hist + Y1i'*Y1i;
+    Y1hist    = Y1hist + Y1int'*Y1int;
     
     % optional: save the Y1i data in an array instead, then add/remove data
     % from history stack to maximize min eigenvalue of Y1hist.
@@ -164,9 +197,9 @@ if flag == 0 %if min eigenvalue of history stack less than lambda
     % check min eigenvalue condition
     Y1eigenValMin = min(Y1eigenVal);
     if (Y1eigenValMin > lambda)
-       flag = 1;
+       pos = 1;
     else
-       flag = 0;
+       pos = 0;
     end
 end
 
@@ -176,7 +209,7 @@ his('time') = cat(1,his('time'),t)
 his('ui') = cat(2,his('ui'),u);
 
 % determine which update law to use (i.e., thetaHatDot)
-if flag == 1
+if pos == 1
     %(after eigenvalues condition met for Y1hist)
     
     % for CL:
@@ -188,17 +221,17 @@ if flag == 1
     % assuming new data in history stack
 
     % compute thetaHatDot
-    iter = size(his('Y1i'));
+    iter = size(his('script_Y1i'));
     iter = iter(3);
     
-    ui = his('ui');
-    Y1i = his('Y1i');
+    sciptr_ui = his('script_ui');
+    script_Y1i = his('script_Y1i');
+    
     cl_sumY = 0;
     for i = 1:iter
-        cl_sumY = Y1i(:,:,i)'*(ui(:,i)-Y1i(:,:,i)*thetaHat);
+        cl_sumY = script_Y1i(:,:,i)'*(sciptr_ui(:,i)-script_Y1i(:,:,i)*thetaHat);
     end
     thetaHatDot = gamma*Y2'*r + Kcl*gamma*cl_sumY;
-    cl_sumY
 else
     % (before eigenvalues condition met for Y1hist)
 
