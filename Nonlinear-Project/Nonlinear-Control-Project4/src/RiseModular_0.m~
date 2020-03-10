@@ -1,5 +1,7 @@
-function RiseModular_3
+function RiseModular_0
 %Set up dynamics for sim
+hold on;
+
 p1       = 3.473;
 p2       = 0.196;
 p3       = 0.242;
@@ -19,7 +21,7 @@ tf   = 300;
 % define e2_0
 e2_0     = [3;2];
 
-X0   = [4;10;e2_0;3;2;1;1;1;1;1];
+X0   = [4;10;e2_0;3;2;0.5;1;1.5;2;2.5];
 
 
 
@@ -41,7 +43,7 @@ X0   = [X0;Rise_intergrate_1]
 opts = odeset('RelTol',exp(-3),'AbsTol',exp(-3));
 
 % Integrate (you can send the paramters theta to the dynamics as seen below)
-[t,STATES] = ode45(@(t,X) composite_rise3(t,X,theta),[0 tf],X0,opts);
+[t,STATES] = ode45(@(t,X) composite_rise1(t,X,theta),[0 tf],X0,opts);
 
 % Set up desired trajectory data for plots (enter desired trajectory for your simulation)
 qd = [cos(0.5*t) 2*cos(t)]';
@@ -59,7 +61,6 @@ Rise_intergrate_1  = STATES(:,12:13)';
 q  = -e1 + qd;
 
 % Plot the actual vs desired trajectories
-
 figure(1)
 plot(t,qd,'-','LineWidth',2)
 hold on
@@ -115,13 +116,12 @@ plot(length_,tau,'-','LineWidth',2)
 figure(5)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
 
-thetatilde = thetaHat-repmat(theta,1,length(t));
-plot(t,sqrt(thetatilde(1,:).^2 + thetatilde(2,:).^2 ...
-    +thetatilde(3,:).^2 + thetatilde(4,:).^2 + ...
-    thetatilde(5,:).^2 ),'-','LineWidth',2)
+figure(6)
+plot(t,sqrt(e1(1,:).^2 + e1(2,:).^2),'-','LineWidth',2)
+%}
 
 
-function [XDot] = composite_rise3(t,X,theta)
+function [XDot] = composite_rise1(t,X,theta)
 
 % Parse parameter vector
 p1 = theta(1);
@@ -135,15 +135,16 @@ e2_0     = [3;2];
 % Select gains for controller
 Ks        = 10; 
 % K2       = 25;
-a1       = 2; 
-a2       = 3;
+a1       = 3; 
+a2       = 4;
 Beta     = 1; 
+%{
 gamma = [10 0 0 0 0; ...
     0 1 0 0 0; ...
     0 0 1 0 0; ...
     0 0 0 10 0; ...
     0 0 0 0 1];   
-
+%}
 
 % Desired trajectory and needed derivatives
 qd       = [cos(0.5*t);2*cos(t)];
@@ -196,7 +197,7 @@ yd24      = 0;
 yd25      = qdDot(2); 
 Yd       = [yd11 yd12 yd13 yd14 yd15;yd21 yd22 yd23 yd24 yd25];
 
-
+%{
 % Compute differential of regression matrix
 ydDot11      = qdDotDotDot(1); 
 ydDot12      = qdDotDotDot(2); 
@@ -218,7 +219,7 @@ ydDot23      = -sd2*qdDot(2)*qdDotDot(1) ...
 ydDot24      = 0; 
 ydDot25      = qdDotDot(2); 
 YdDot       = [ydDot11 ydDot12 ydDot13 ydDot14 ydDot15;ydDot21 ydDot22 ydDot23 ydDot24 ydDot25];
-
+%}
 
 % Design RISE term
 Rise_intergrate_1_Dot = (Ks+1)*a2*e2 + Beta*sign(e2);
@@ -247,7 +248,7 @@ thetaHatDot = gamma*YdDot'*r + gamma*Ydf_dot'*E;
 Rise_intergrate_2_Dot = K2*E + Beta*sign(E);
 %}
 
-thetaHatDot = gamma*Yd'*(e1-e2+r);
+thetaHatDot = [cos(t);cos(t);cos(t);cos(t);cos(t)];
 
 t
 

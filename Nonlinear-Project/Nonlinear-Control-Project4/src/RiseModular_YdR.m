@@ -11,7 +11,7 @@ theta    = [p1;p2;p3;f1;f2];
 % Stacked parameter vector
 
 % Simulation final time
-tf   = 500;
+tf   = 300;
 
 % Initial condition vector (X0 must be same size and "form" as X and XDot below)
 % (i.e., in this sim, X0 = [e1_0;e2_0;r_0;thetahat_0])
@@ -59,6 +59,7 @@ Rise_intergrate_1  = STATES(:,12:13)';
 q  = -e1 + qd;
 
 % Plot the actual vs desired trajectories
+
 figure(1)
 plot(t,qd,'-','LineWidth',2)
 hold on
@@ -68,7 +69,7 @@ plot(t,q,':','LineWidth',2)
 hold off
 
 figure(2)
-plot(t,e1,'k-','LineWidth',2)
+plot(t,e1,'LineWidth',2)
 
 
 figure(3)
@@ -110,10 +111,17 @@ length_ = 1:tausize(2);
 figure(4)
 plot(length_,tau,'-','LineWidth',2)
 
+thetatilde = thetaHat-repmat(theta,1,length(t));
 
 figure(5)
-plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
-%}
+plot(t,thetatilde,'-','LineWidth',2)
+
+
+plot(t,sqrt(thetatilde(1,:).^2 + thetatilde(2,:).^2 ...
+    +thetatilde(3,:).^2 + thetatilde(4,:).^2 + ...
+    thetatilde(5,:).^2 ),'-','LineWidth',2)
+
+
 
 
 function [XDot] = composite_rise2(t,X,theta)

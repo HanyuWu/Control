@@ -59,6 +59,7 @@ Rise_intergrate_1  = STATES(:,12:13)';
 q  = -e1 + qd;
 
 % Plot the actual vs desired trajectories
+
 figure(1)
 plot(t,qd,'-','LineWidth',2)
 hold on
@@ -68,7 +69,7 @@ plot(t,q,':','LineWidth',2)
 hold off
 
 figure(2)
-plot(t,e1,'k-','LineWidth',2)
+plot(t,e1,'LineWidth',2)
 
 
 figure(3)
@@ -113,7 +114,14 @@ plot(length_,tau,'-','LineWidth',2)
 
 figure(5)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
-%}
+
+
+thetatilde = thetaHat-repmat(theta,1,length(t));
+
+plot(t,sqrt(thetatilde(1,:).^2 + thetatilde(2,:).^2 ...
+    +thetatilde(3,:).^2 + thetatilde(4,:).^2 + ...
+    thetatilde(5,:).^2 ),'-','LineWidth',2)
+
 
 
 function [XDot] = composite_rise4(t,X,theta)
@@ -173,7 +181,7 @@ M        = [p1 + 2*p3*c2 p2 + p3*c2;p2 + p3*c2 p2];
 Vm       = [-p3*s2*qDot(2) -p3*s2*(qDot(1) + qDot(2));p3*s2*qDot(1) 0];
 fd       = [f1 0;0 f2];
 
-Taud     = [0; 0];
+Taud     = [cos(t); sin(t)];
 
 % Compute current regression matrix
 cd2       = cos(qd(2));

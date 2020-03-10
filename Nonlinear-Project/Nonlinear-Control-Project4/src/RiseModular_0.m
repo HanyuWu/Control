@@ -1,6 +1,6 @@
 function RiseModular_0
 %Set up dynamics for sim
-hold on;
+
 
 p1       = 3.473;
 p2       = 0.196;
@@ -13,7 +13,7 @@ theta    = [p1;p2;p3;f1;f2];
 % Stacked parameter vector
 
 % Simulation final time
-tf   = 30;
+tf   = 300;
 
 % Initial condition vector (X0 must be same size and "form" as X and XDot below)
 % (i.e., in this sim, X0 = [e1_0;e2_0;r_0;thetahat_0])
@@ -21,7 +21,7 @@ tf   = 30;
 % define e2_0
 e2_0     = [3;2];
 
-X0   = [4;10;e2_0;3;2;1;1;1;1;1];
+X0   = [4;10;e2_0;3;2;0.5;1;1.5;2;2.5];
 
 
 
@@ -70,7 +70,7 @@ plot(t,q,':','LineWidth',2)
 hold off
 
 figure(2)
-plot(t,e1,'k-','LineWidth',2)
+plot(t,e1,'LineWidth',2)
 
 
 figure(3)
@@ -112,10 +112,20 @@ length_ = 1:tausize(2);
 figure(4)
 plot(length_,tau,'-','LineWidth',2)
 
+thetatilde = thetaHat-repmat(theta,1,length(t));
 
 figure(5)
-plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
-%}
+plot(t,thetatilde,'-','LineWidth',2)
+
+figure(6)
+plot(t,sqrt(e1(1,:).^2 + e1(2,:).^2),'-','LineWidth',2)
+
+figure(7)
+plot(t,sqrt(thetatilde(1,:).^2 + thetatilde(2,:).^2 ...
+    +thetatilde(3,:).^2 + thetatilde(4,:).^2 + ...
+    thetatilde(5,:).^2 ),'-','LineWidth',2)
+
+
 
 
 function [XDot] = composite_rise1(t,X,theta)
@@ -132,8 +142,8 @@ e2_0     = [3;2];
 % Select gains for controller
 Ks        = 10; 
 % K2       = 25;
-a1       = 2; 
-a2       = 3;
+a1       = 3; 
+a2       = 4;
 Beta     = 1; 
 %{
 gamma = [10 0 0 0 0; ...
@@ -245,7 +255,7 @@ thetaHatDot = gamma*YdDot'*r + gamma*Ydf_dot'*E;
 Rise_intergrate_2_Dot = K2*E + Beta*sign(E);
 %}
 
-thetaHatDot = [0;0;0;0;0];
+thetaHatDot = [cos(t);cos(t);cos(t);cos(t);cos(t)];
 
 t
 

@@ -1,4 +1,4 @@
-function RiseModular_3
+function RiseModular_YdR
 %Set up dynamics for sim
 p1       = 3.473;
 p2       = 0.196;
@@ -11,7 +11,7 @@ theta    = [p1;p2;p3;f1;f2];
 % Stacked parameter vector
 
 % Simulation final time
-tf   = 300;
+tf   = 3500;
 
 % Initial condition vector (X0 must be same size and "form" as X and XDot below)
 % (i.e., in this sim, X0 = [e1_0;e2_0;r_0;thetahat_0])
@@ -41,7 +41,7 @@ X0   = [X0;Rise_intergrate_1]
 opts = odeset('RelTol',exp(-3),'AbsTol',exp(-3));
 
 % Integrate (you can send the paramters theta to the dynamics as seen below)
-[t,STATES] = ode45(@(t,X) composite_rise3(t,X,theta),[0 tf],X0,opts);
+[t,STATES] = ode45(@(t,X) composite_rise2(t,X,theta),[0 tf],X0,opts);
 
 % Set up desired trajectory data for plots (enter desired trajectory for your simulation)
 qd = [cos(0.5*t) 2*cos(t)]';
@@ -59,7 +59,6 @@ Rise_intergrate_1  = STATES(:,12:13)';
 q  = -e1 + qd;
 
 % Plot the actual vs desired trajectories
-
 figure(1)
 plot(t,qd,'-','LineWidth',2)
 hold on
@@ -114,14 +113,10 @@ plot(length_,tau,'-','LineWidth',2)
 
 figure(5)
 plot(t,thetaHat-repmat(theta,1,length(t)),'-','LineWidth',2)
-
-thetatilde = thetaHat-repmat(theta,1,length(t));
-plot(t,sqrt(thetatilde(1,:).^2 + thetatilde(2,:).^2 ...
-    +thetatilde(3,:).^2 + thetatilde(4,:).^2 + ...
-    thetatilde(5,:).^2 ),'-','LineWidth',2)
+%}
 
 
-function [XDot] = composite_rise3(t,X,theta)
+function [XDot] = composite_rise2(t,X,theta)
 
 % Parse parameter vector
 p1 = theta(1);
@@ -247,7 +242,7 @@ thetaHatDot = gamma*YdDot'*r + gamma*Ydf_dot'*E;
 Rise_intergrate_2_Dot = K2*E + Beta*sign(E);
 %}
 
-thetaHatDot = gamma*Yd'*(e1-e2+r);
+thetaHatDot = gamma*YdDot'*r;
 
 t
 
