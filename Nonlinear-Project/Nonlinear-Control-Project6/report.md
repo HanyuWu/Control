@@ -42,7 +42,10 @@
 
         <img style="float: center;" src="examples/fcnn.png"><br>
 
-        So we don't have a meaningful paramter estimates plot.
+        We use gaussian activation in the hidden layer, and no activation in the output layer.
+
+        <img style="float: center;" src="examples/NN_Continuous/What.jpg"><br>
+        <img style="float: center;" src="examples/NN_Continuous/Vhat.jpg"><br>
 
         **5. Plot of the parameter estimate errors.** <br>
 
@@ -75,7 +78,8 @@
 
         **4. Plot of the adaptive estimates.** <br>
 
-        We don't have a meaningful paramter estimates plot as shown above.
+        <img style="float: center;" src="examples/NN_SLIDING/What.jpg"><br>
+        <img style="float: center;" src="examples/NN_SLIDING/Vhat.jpg"><br>
 
         **5. Plot of the parameter estimate errors.** <br>
 
@@ -108,7 +112,8 @@
 
         **4. Plot of the adaptive estimates.** <br>
 
-        We don't have a meaningful paramter estimates plot as shown above.
+        <img style="float: center;" src="examples/NN_RISE/What.jpg"><br>
+        <img style="float: center;" src="examples/NN_RISE/Vhat.jpg"><br>
 
         **5. Plot of the parameter estimate errors.** <br>
 
@@ -152,7 +157,7 @@
 
   * **Performance of the adaptation for each case**<br> 
 
-    The parameter estimate errors are almost the same in these three cases, but I don't think it's meaningful, because we have no feedback during the Neural-Network update, We use unsupervised learning instead. In such case, we don't have to do symmetry breaking and back propagation. I don't think we are doing meaningful estimation, because the feefback term has contributed the main effort during the error tracking. It seems to me that the FCNN is meaningless especially we are enforcing projection method on the neural network.
+    The parameter estimate errors are almost the same in these three cases, it seems that our feedback term has dominated the convergence. In my opinion, the neural network does not have meaningful interpretation given unsupervised learning. Although There is a feedback term &nbsp; <img src="https://latex.codecogs.com/svg.latex?e_{2}" title="e_{2}" /> &nbsp; in the Neural Network update law, we are not using back propagation. In such way, we don't even have to do symmetric breaking, we initilize all the weights in the FCNN as 0. In my implementation the estimate errors very depends on the ground truth &nbsp; <img src="https://latex.codecogs.com/gif.latex?f" title="f" /> &nbsp; .
     
   * **Control effort for each case**<br>    
     

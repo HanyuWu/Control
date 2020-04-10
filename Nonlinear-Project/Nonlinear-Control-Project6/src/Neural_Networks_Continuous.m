@@ -25,7 +25,6 @@ states = [states(:,3:4),states(:,1:2)]; % reorder states to [pos1, pos2, vel1, v
 error = qd-states;
 rms = sqrt(mean(error.^2))*180/pi;
 
-%{
 figure(2)
 plot(t,u(:,1))
 title('Link 1 Control')
@@ -75,8 +74,8 @@ xlabel('Time (s)')
 ylabel('Percent Error (%)')
 axis([0,25,-50,50])
 saveas(figure(7),'Link 2 Parameter Estimate Errors sm.png')
-%}
 
+figure(8)
 plot(t,sqrt(sum(((error*180/pi).*(error*180/pi)),2)))
 title('$$\left \| e \right \|$$','interpreter','latex')
 xlabel('Time (s)')
